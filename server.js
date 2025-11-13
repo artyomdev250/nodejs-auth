@@ -1,13 +1,18 @@
+require('dotenv').config();
 const express = require('express');
 const app = express();
-const PORT = 3000;
 
 app.use(express.json());
 
+const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes');
+
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+
 app.get('/', (req, res) => {
-    res.send('Hello from Node.js server!');
+    res.send('Welcome to the Node.js API');
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
