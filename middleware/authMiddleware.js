@@ -16,7 +16,6 @@ const protect = async (req, res, next) => {
             return res.status(401).json({ message: "Not authorized, no token!" });
         }
 
-        // Use ACCESS_TOKEN_SECRET instead of JWT_SECRET
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
         const user = await userSchema.findById(decoded.id).select("-password");
