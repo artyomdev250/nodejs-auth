@@ -1,20 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const { createUser } = require('../controllers/signUpController');
+const { loginUser } = require('../controllers/signInController');
 
-router.get('/signin', (req, res) => {
-    res.send('Sign in');
-});
-
-router.get('/signup', (req, res) => {
-    res.send('Sign up');
-});
-
-router.get('/signout', (req, res) => {
-    res.send('Sign out');
-});
-
-router.get('/refresh', (req, res) => {
-    res.send('Refresh token');
-});
+router.post('/signup', createUser);
+router.post('/signin', loginUser);
 
 module.exports = router;
