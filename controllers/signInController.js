@@ -6,35 +6,44 @@ const loginUser = async (req, res) => {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({ message: "Email and password are required" });
+            return res.status(400).json({ message: "Email and password are required!" });
         }
 
         // Find user
         const user = await userSchema.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ message: "Invalid email or password" });
-        }
+        if (!user) return res.status(400).json({ message: "Invalid email or password!" });
 
-        // Compare plain password
+        // Compare passwords (no hashing yet)
         if (password !== user.password) {
-            return res.status(400).json({ message: "Invalid email or password" });
+            return res.status(400).json({ message: "Invalid email or password!" });
         }
 
-        // Create JWT
-        const token = jwt.sign(
+        // Create tokens
+        const accessToken = jwt.sign(
             { id: user._id },
-            process.env.JWT_SECRET,
-            { expiresIn: "1d" }
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: process.env.ACCESS_TOKEN_EXPIRES }
         );
 
-        res.json({
-            message: "Login successful",
-            token
+        const refreshToken = jwt.sign(
+            { id: user._id },
+            process.env.REFRESH_TOKEN_SECRET,
+            { expiresIn: process.env.REFRESH_TOKEN_EXPIRES }
+        );
+
+        // Save refresh token
+        user.refreshToken = refreshToken;
+        await user.save();
+
+        return res.json({
+            message: "Login successful!",
+            accessToken,
+            refreshToken
         });
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Server error" });
+        return res.status(500).json({ message: "Server error!" });
     }
 };
 
