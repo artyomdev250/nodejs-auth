@@ -10,6 +10,12 @@ const createUser = async (req, res) => {
             return res.status(400).json({ message: "All fields are required!" });
         }
 
+        // Email format validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({ message: "Invalid email format!" });
+        }
+
         // Password must be at least 5 characters
         if (password.length < 5) {
             return res.status(400).json({
